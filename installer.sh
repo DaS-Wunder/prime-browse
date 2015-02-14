@@ -31,6 +31,7 @@ then
 
 else
 	USERNAME=$1
+	USERGROUP=`id -g $USERNAME`
 	INSTALLDIR=$2	
 
 fi
@@ -68,6 +69,7 @@ cd $INSTALLDIR
 for FILE in "${PRIME_FILES[@]}"
 do
 	wget -N $PRIME_REPOSITORY_URL$FILE
+	
 done
 
 echo -e "\n	...downloaded all files from prime-browse for the website ..."
@@ -79,7 +81,6 @@ cd $INSTALLDIR/lib
 
 echo -e "\n     ...try to get all files from recline...."
 
-#TODO what todo if repo already exists, test
 git clone --branch $RECLINE_VERSION $RECLINE_REPOSITORY_URL $RECLINE_FOLDERNAME
 
 echo -e "\n     ...downloaded all files from $RECLINE_FOLDERNAME ..."
@@ -94,7 +95,19 @@ echo -e "\n	...try to get elasticsearch.js...."
 	wget -N $ELASTICSEARCH_JS_REPOSITORY_URL$ELASTICSEARCH_JS_FILE
 
 echo -e "\n	...downloaded elasticsearch.js ..."
+echo -e "\n	... all files downloaded \n"
 
 
+######################################################################
+# Changing ownership of files in folder
+######################################################################
+echo -e "\n	Changing ownership and executive rights of files in $INSTALLDIR..."
 
+cd ..
+chown -R $USERNAME:$USERGROUP .
+chmod -R 744 .
+
+echo -e "\n 	.... all done.\n"
+echo -e "\n	Installation complete. Only thing you have to do now is to let your webserver point to $INSTALLDIR.\n
+Good luck :-)"
 exit 
